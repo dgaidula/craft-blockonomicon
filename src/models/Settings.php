@@ -18,7 +18,7 @@ class Settings extends Model
 	 * @inheritdoc
 	 * @see yii\base\BaseObject
 	 */
-	public function init()
+	public function init(): void
 	{
 		parent::init();
 	}

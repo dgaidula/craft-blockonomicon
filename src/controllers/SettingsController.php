@@ -34,7 +34,7 @@ use yii\web\Response;
  */
 class SettingsController extends Controller
 {
-	public function init()
+	public function init(): void
 	{
 		// All requests require admin privileges.
 		$this->requireAdmin();

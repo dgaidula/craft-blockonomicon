@@ -106,7 +106,7 @@ class Blockonomicon extends Plugin
 	 * @inheritdoc
 	 * @see craft\base\Plugin
 	 */
-	protected function createSettingsModel()
+	protected function createSettingsModel(): ?\craft\base\Model
 	{
 		return new \charliedev\blockonomicon\models\Settings();
 	}
@@ -115,7 +115,7 @@ class Blockonomicon extends Plugin
 	 * @inheritdoc
 	 * @see craft\base\Plugin
 	 */
-	protected function settingsHtml()
+	protected function settingsHtml(): ?string
 	{
 		return Craft::$app->getView()->renderTemplate('blockonomicon/index');
 	}
@@ -124,7 +124,7 @@ class Blockonomicon extends Plugin
 	 * @inheritdoc
 	 * @see craft\base\Plugin
 	 */
-	public function getCpNavItem()
+	public function getCpNavItem(): ?array
 	{
 		if (!$this->canUserAccessSettings()) {
 			return null;
