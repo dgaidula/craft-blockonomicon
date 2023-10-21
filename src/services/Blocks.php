@@ -15,6 +15,7 @@ use craft\events\RegisterTemplateRootsEvent;
 use craft\helpers\FileHelper;
 use craft\base\FieldInterface;
 use craft\web\View;
+use craft\elements\MatrixBlock;
 
 use yii\base\Component;
 use yii\base\Event;
@@ -154,9 +155,9 @@ class Blocks extends Component
 	/**
 	 * Creates an array representing a block and all of its associated fields and settings.
 	 * @param \Craft\models\MatrixBlockType $block The block to create a representation of.
-	 * @return array The block data, as an array.
+	 * @return array|null The block data, as an array.
 	 */
-	public function getBlockData(\Craft\models\MatrixBlockType $block): array
+	public function getBlockData(\Craft\models\MatrixBlockType $block): ?array
 	{
 		$blockdata = [
 			'name' => $block->name,
@@ -165,7 +166,35 @@ class Blocks extends Component
 			'fields' => [],
 		];
 
-		foreach ($block->getFields() as $field) {
+		$blockFields = [];
+
+		//foreach ($block->getFields() as $field) {
+		// $MatrixBlocks = \craft\elements\MatrixBlock::find()->all();
+// 		$fieldLayout = $block->getFieldLayout();
+// 		$fields = $fieldLayout->getCustomFields();
+		//craft4 update
+		// $tabs = $block->getFieldLayout()->getTabs();
+// 		foreach($tabs as $tab){
+// 			foreach($tab->getElements() as $field){
+// 				$blockFields[] = $field;
+// 			}
+// 		}
+
+		//$test = $blockFields[1]->fields();
+
+		$fieldService = Craft::$app->getFields();
+
+		$fieldIds = $fieldService->getFieldIdsByLayoutIds([$block->fieldLayoutId]);
+
+		foreach($fieldIds[$block->fieldLayoutId] as $fieldId){
+			$blockFields[] = $fieldService->getFieldById($fieldId);
+		}
+
+
+		//$fields = $tabs->getElements();
+
+		foreach ($blockFields as $field) {
+			//$fielddata = $this->getFieldData($field);
 			$fielddata = $this->getFieldData($field);
 			if ($fielddata === null) {
 				return null;
@@ -181,7 +210,26 @@ class Blocks extends Component
 	 * @param \craft\base\Field $field The field to create a representation of.
 	 * @return array The field data, as an array.
 	 */
-	public function getFieldData(\Craft\base\Field $field): array
+	// public function getFieldData(\Craft\base\Field $field): array
+// 	{
+// 		// Allow additional transformations to be made to settings for fields before returning.
+// 		$event = new SaveFieldEvent();
+// 		$event->field = $field;
+// 		$event->settings = [
+// 			'type' => get_class($field),
+// 			'name' => $field->name,
+// 			'handle' => $field->handle,
+// 			'instructions' => $field->instructions,
+// 			'required' => $field->required,
+// 			'translationMethod' => $field->translationMethod,
+// 			'translationKeyFormat' => $field->translationKeyFormat,
+// 			'typesettings' => $field->getSettings(),
+// 		];
+// 		Blockonomicon::getInstance()->trigger(Blockonomicon::EVENT_SAVE_FIELD, $event);
+//
+// 		return $event->settings;
+// 	}
+public function getFieldData(\Craft\base\Field $field): array
 	{
 		// Allow additional transformations to be made to settings for fields before returning.
 		$event = new SaveFieldEvent();

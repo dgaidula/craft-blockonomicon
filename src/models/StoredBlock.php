@@ -55,7 +55,7 @@ class StoredBlock extends Model
 	 * @inheritdoc
 	 * @see craft\base\Model
 	 */
-	public function rules()
+	public function rules(): array
 	{
 		return [
 			[['handle'], HandleValidator::class],

@@ -45,15 +45,31 @@ class MatrixField
 
 				$event->settings['typesettings']['blocktypes'] = [];
 
+				//craft 4 version need to use field service
+				$fieldService = Craft::$app->getFields();
+
 				foreach ($event->field->getBlockTypes() as $block) {
 					$blocksettings = [];
 					$blocksettings['handle'] = $block->handle;
 					$blocksettings['name'] = $block->name;
 
-					foreach ($block->getFields() as $field) {
+					//craft 4 style have to use complex field service
+					$fieldIds = $fieldService->getFieldIdsByLayoutIds([$block->fieldLayoutId]);
+
+					foreach($fieldIds[$block->fieldLayoutId] as $fieldId){
+						$blockFields[] = $fieldService->getFieldById($fieldId);
+					}
+
+					foreach ($blockFields as $field){
 						$fielddata = Blockonomicon::getInstance()->blocks->getFieldData($field);
 						$blocksettings['fields'][] = $fielddata;
+
 					}
+
+					// foreach ($block->getFields() as $field) {
+// 						$fielddata = Blockonomicon::getInstance()->blocks->getFieldData($field);
+// 						$blocksettings['fields'][] = $fielddata;
+// 					}
 
 					$event->settings['typesettings']['blocktypes'][] = $blocksettings;
 				}

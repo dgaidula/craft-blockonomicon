@@ -111,6 +111,8 @@ class SettingsController extends Controller
 		$matrix = $matrices[$matrixid]; // The currently edited Matrix.
 		$matrixblocks = $matrix->getBlockTypes(); // Blocks attached to the matrix.
 		$blocks = []; // Set of block information to render for the matrix being edited.
+		//craft4 field service
+		$fieldService = Craft::$app->getFields();
 
 		// Compile a list of blocks already attached to the matrix, adding information from the cached block list if available.
 		// Also key the matrix block array by block handle, instead of leaving it sorted by block order.
@@ -122,7 +124,9 @@ class SettingsController extends Controller
 			$newblock['handle'] = $block->handle;
 			$newblock['id'] = $block->id;
 			$newblock['description'] = !empty($allblocks[$block->handle]['description']) ? $allblocks[$block->handle]['description'] : '';
-			$newblock['fields'] = count($block->getFieldLayout()->getFieldIds());
+			//$newblock['fields'] = count($block->getFieldLayout()->getFieldIds());
+			//craft4
+			$newblock['fields'] = count($block->getFieldLayout()->getCustomFields());
 
 			if (isset($allblocks[$block->handle])) { // Block has an associated exported counterpart, check for consistency.
 				$blockdata = Blockonomicon::getInstance()->blocks->getBlockData($block);
@@ -173,7 +177,18 @@ class SettingsController extends Controller
 			// Key block fields by handle, if a block exists, otherwise keep as an empty array.
 			$blockfields = [];
 			if (isset($matrixblocks[$block['handle']])) {
-				$blockfields = $matrixblocks[$block['handle']]->getFields();
+
+				$matrixBlock = $matrixblocks[$block['handle']];
+
+				$fieldIds = $fieldService->getFieldIdsByLayoutIds([$matrixBlock->fieldLayoutId]);
+
+				foreach($fieldIds[$matrixBlock->fieldLayoutId] as $fieldId){
+					$blockFields[] = $fieldService->getFieldById($fieldId);
+				}
+
+				// $test = 'black';
+// 				$blockfields = $matrixblocks[$block['handle']]->getFields();
+
 				$blockfields = array_reduce($blockfields, function ($in, $val) {
 					$in[$val->handle] = $val;
 					return $in;
