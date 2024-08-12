@@ -2,7 +2,7 @@
 	"name": "charliedev/blockonomicon",
 	"description": "Export and import entire matrix blocks and manage/render their views. Version 2.0.2+ supports Craft 4+!",
 	"type": "craft-plugin",
-	"version": "2.0.2",
+	"version": "2.0.3",
 	"license": "proprietary",
 	"authors": [
 		{
