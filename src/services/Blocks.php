@@ -282,8 +282,16 @@ public function getFieldData(\Craft\base\Field $field): array
 
 		if ($block != null) { // Block already exists, update fields.
 			// Store a list of the block fields, keyed by handle.
-			$blockfields = $block->getFields();
-			$blockfields = array_reduce($blockfields, function ($in, $val) {
+			//craft 4 version need to use field service
+			$fieldService = Craft::$app->getFields();
+			$blockFields = [];
+
+			$fieldIds = $fieldService->getFieldIdsByLayoutIds([$block->fieldLayoutId]);
+			foreach($fieldIds[$block->fieldLayoutId] as $fieldId){
+				$blockFields[] = $fieldService->getFieldById($fieldId);
+			}
+
+			$blockFieldsByHandle = array_reduce($blockFields, function ($in, $val) {
 				$in[$val->handle] = $val;
 				return $in;
 			}, []);
@@ -293,8 +301,8 @@ public function getFieldData(\Craft\base\Field $field): array
 			foreach ($blockdata['fields'] as $field) {
 				$currentfield = null;
 				$fieldid = null;
-				if (isset($blockfields[$field['handle']])) { // Existing field, key by field id, but otherwise update in-place.
-					$currentfield = $blockfields[$field['handle']];
+				if (isset($blockFieldsByHandle[$field['handle']])) { // Existing field, key by field id, but otherwise update in-place.
+					$currentfield = $blockFieldsByHandle[$field['handle']];
 
 					$fieldid = $currentfield->id; // Get existing field id.
 				} else { // New field.
